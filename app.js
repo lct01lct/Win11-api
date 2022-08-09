@@ -9,6 +9,7 @@ app.use(express.json());
 
 app.use('/api/users', userRouter);
 
+// 错误中间件
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
