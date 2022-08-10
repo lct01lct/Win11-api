@@ -15,3 +15,4 @@ exports.getUser = catchAsync(async (req, res) => {
     },
   });
 });
+

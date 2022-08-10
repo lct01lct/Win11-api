@@ -35,7 +35,7 @@ exports.login = catchAsync(async (req, res, next) => {
   // 检查 name 是否存在，密码是否正确
   const user = await User.findOne({ name }).select('+password');
   if (!user) {
-    return next(new AppError('没有改用户!', 401));
+    return next(new AppError('没有该用户!', 401));
   }
   const correct = await user.correctPassword(password, user.password);
   if (!user || !correct) {
@@ -49,6 +49,39 @@ exports.login = catchAsync(async (req, res, next) => {
     token,
   });
 });
+
+exports.rename = catchAsync(async (req,res,next) =>{
+  const { name , password , rename } = req.body;
+  
+  if(!name || !password){
+    return next(new AppError('请提供密码和账户'),400)
+  }
+
+  if(!rename){
+    return next(new AppError('请提供要更改的用户名！'),400)
+  }
+
+  const user = await User.findOne({ name }).select('+password');
+  if (!user) {
+    return next(new AppError('没有该用户!', 401));
+  }
+
+  const correct = await user.correctPassword(password, user.password);
+  if (!user || !correct) {
+    return next(new AppError('账号或者密码错误', 401));
+  }
+
+  // 修改用户名
+  const {res:modifiedCount} = await User.updateOne({ name },{ $set:{ name:rename } });
+
+  if(!res){
+    return next(new AppError('修改失败！？'),400)
+  }
+
+  res.status(200).json({
+    status:'success'  
+  })
+})  
 
 // 分发 token
 function signToken(id) {
