@@ -12,6 +12,9 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, '请提供密码!'],
   },
+  // avatar 头像
+  // email 邮箱
+  // initFiles 初始的文件结构
 });
 
 userSchema.pre('save', async function (next) {
